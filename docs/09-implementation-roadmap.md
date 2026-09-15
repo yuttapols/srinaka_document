@@ -10,7 +10,7 @@ Phase 5 เป็น phase หาบั๊ก/ช่องโหว่/ช่อ
 | ลำดับ | Backend | Frontend | ผลลัพธ์ที่ตรวจรับได้ |
 |---|---|---|---|
 | 1 | Foundation, Auth (ทุก role), Profile | App shell, Auth, Design system | ทุก role login ได้ |
-| 2 | Product/Service catalog, Promotion, Booking, Customer register (กรอกเอง/Google/LINE) | หน้า public สินค้า/บริการ/โปรโมชั่น, flow จองนัด, สมัครสมาชิก+ลิงก์บัญชี | ลูกค้าสมัคร+verify+จองนัดได้ (ยังไม่จ่ายเงิน) |
+| 2 | Product/Service catalog, Promotion, Booking, Customer register (กรอกเอง/LINE) | หน้า public สินค้า/บริการ/โปรโมชั่น, flow จองนัด, สมัครสมาชิก+ลิงก์บัญชี | ลูกค้าสมัคร+verify+จองนัดได้ (ยังไม่จ่ายเงิน) |
 | 3 | Payment (แนบสลิป), Cancel/Refund, Rating | หน้าจ่ายเงิน(แนบสลิป), ยกเลิก/ขอคืนเงิน, ให้คะแนน | ครบ flow ตั้งแต่จองถึงจบบริการ+ยกเลิก/รีฟันด์+รีวิว |
 | 4 | Report ภาพรวม, Employee schedule, Admin ops | Report dashboard, Employee schedule UI, Admin UI, polish | พร้อม deploy จริง, UAT ทั้งระบบ |
 | 5 | หาบั๊ก/ช่องโหว่/ช่องว่างทั้งระบบ แล้วแก้/เติมเต็ม | เช่นเดียวกันฝั่ง FE | ระบบผ่านการรีวิวรอบสุดท้ายก่อน launch จริง |
@@ -28,14 +28,14 @@ Phase 5 เป็น phase หาบั๊ก/ช่องโหว่/ช่อ
 - [ ] Docker/Render/Neon deploy setup
 
 Acceptance: ทุก role login ได้ตามสิทธิ์, deploy ขึ้น Render+Neon ได้ — Customer self-register (กรอกเอง/
-Google/LINE) เป็นงาน Phase 2 (ดู FR-1.7–FR-1.9), ไม่ใช่ Phase 1
+LINE) เป็นงาน Phase 2 (ดู FR-1.7–FR-1.9), ไม่ใช่ Phase 1
 
 ### BE Phase 2 — Product/Service Catalog, Promotion, Booking
 
-- [ ] schema: products/services, promotions, bookings — เพิ่ม `google_user_id`/`line_user_id`/`verified_at`
-      ใน `users` (migration ใหม่ต่อจาก Phase 1)
-- [ ] Customer สมัครสมาชิก 3 ทาง (กรอกเอง/Google OAuth/LINE OAuth) — FR-1.7, FR-1.8
-- [ ] ลิงก์บัญชี Google/LINE จากหน้า profile (สำหรับคนที่สมัครแบบกรอกเอง) — FR-1.9
+- [ ] schema: products/services, promotions, bookings — เพิ่ม `line_user_id`/`verified_at` ใน `users`
+      (migration ใหม่ต่อจาก Phase 1)
+- [ ] Customer สมัครสมาชิก 2 ทาง (กรอกเอง/LINE OAuth) — FR-1.7, FR-1.8
+- [ ] ลิงก์บัญชี LINE จากหน้า profile (สำหรับคนที่สมัครแบบกรอกเอง) — FR-1.9
 - [ ] CRUD สินค้า/บริการ/โปรโมชั่น (Supervisor เท่านั้น) — FR-4, FR-5
 - [ ] Public API ดูสินค้า/บริการ/โปรโมชั่น (ไม่ต้อง auth)
 - [ ] สร้าง booking (**ต้อง login+verified แล้วเท่านั้น** — บังคับที่ service layer ไม่ใช่แค่ frontend) — FR-6
@@ -97,7 +97,7 @@ Acceptance: ไม่มีบั๊ก/ช่องโหว่ที่รู�
 - [ ] เตรียม guard `verifiedGuard` ใหม่ไว้ (ยังไม่เปิดใช้จริงจนกว่าจะมีหน้าจองใน FE Phase 2)
 - [ ] หน้า Profile แก้ชื่อ/เบอร์โทร (reuse โครงเดิม ปรับฟิลด์)
 
-Acceptance: ทุก role login เข้าเมนูตาม role ได้ — สมัครสมาชิก Customer (กรอกเอง/Google/LINE) + ลิงก์บัญชีเป็นงาน
+Acceptance: ทุก role login เข้าเมนูตาม role ได้ — สมัครสมาชิก Customer (กรอกเอง/LINE) + ลิงก์บัญชีเป็นงาน
 FE Phase 2 (ดู `01-requirements.md` FR-1.7–FR-1.9), ไม่ใช่ Phase 1
 
 ### FE Phase 2 — Public Catalog, Promotion, Booking Flow
@@ -105,9 +105,9 @@ FE Phase 2 (ดู `01-requirements.md` FR-1.7–FR-1.9), ไม่ใช่ Pha
 - [ ] หน้า public แสดงสินค้า/บริการ/โปรโมชั่น+ราคา+รูป (ไม่ต้อง login) — shared component เดิม + GSAP/
       ScrollTrigger (respect `prefers-reduced-motion`)
 - [ ] เปิดใช้ Prerender (SSG) จริงสำหรับ route public (หน้าแรก/catalog/รายละเอียดบริการ/โปรโมชั่น)
-- [ ] สมัครสมาชิก Customer 3 ทาง — กรอกเอง / ปุ่ม "เข้าสู่ระบบด้วย Google" / ปุ่ม "เข้าสู่ระบบด้วย LINE"
+- [ ] สมัครสมาชิก Customer 2 ทาง — กรอกเอง / ปุ่ม "เข้าสู่ระบบด้วย LINE"
       (ส่วนที่ share_money_frontend ไม่มี) — FR-1.7, FR-1.8
-- [ ] หน้า profile: ปุ่มลิงก์บัญชี Google/LINE (สำหรับคนที่สมัครแบบกรอกเอง ให้ verify ทีหลังได้) — FR-1.9
+- [ ] หน้า profile: ปุ่มลิงก์บัญชี LINE (สำหรับคนที่สมัครแบบกรอกเอง ให้ verify ทีหลังได้) — FR-1.9
 - [ ] เปิดใช้ `verifiedGuard` จริง — Flow จองนัด (บังคับ login+verified ก่อนเข้าถึงหน้าจอง) — Reactive Forms
 - [ ] Supervisor: จัดการสินค้า/บริการ/โปรโมชั่น (table/form จาก shared component เดิม), หน้าดู booking + assign
       พนักงาน

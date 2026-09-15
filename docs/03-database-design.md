@@ -33,7 +33,6 @@ erDiagram
         varchar full_name
         varchar phone UK
         varchar role
-        varchar google_user_id UK
         varchar line_user_id UK
         timestamp verified_at
         boolean active
@@ -166,19 +165,18 @@ erDiagram
 | Column | Type | Constraint | Note |
 |---|---|---|---|
 | id | BIGINT | PK, identity | |
-| username | VARCHAR(50) | UNIQUE, NOT NULL | บังคับกรอกทุกทาง (กรอกเอง/Google/LINE) ให้ login ด้วย username/password ได้เสมอ |
+| username | VARCHAR(50) | UNIQUE, NOT NULL | บังคับกรอกทุกทาง (กรอกเอง/LINE) ให้ login ด้วย username/password ได้เสมอ |
 | password_hash | VARCHAR(100) | NOT NULL | BCrypt hash — บังคับกรอกทุกทางเช่นกัน (ดู FR-1.7) |
 | full_name | VARCHAR(150) | NOT NULL | |
 | phone | VARCHAR(20) | UNIQUE, NULL | ข้อมูลติดต่อธรรมดา บังคับกรอกตอนสมัคร แต่**ไม่ verify ว่าใช้งานได้จริง** (ไม่ใช้ SMS OTP แล้ว) |
 | role | VARCHAR(20) | NOT NULL, CHECK IN ('ADMIN','SUPERVISOR','EMPLOYEE','CUSTOMER') | |
-| google_user_id | VARCHAR(255) | UNIQUE, NULL | ผูกตอนสมัครผ่าน Google หรือตอนลิงก์บัญชีทีหลัง (FR-1.9) |
 | line_user_id | VARCHAR(255) | UNIQUE, NULL | ผูกตอนสมัครผ่าน LINE หรือตอนลิงก์บัญชีทีหลัง (FR-1.9) |
-| verified_at | TIMESTAMP | NULL | ต้อง NOT NULL ก่อน Customer จะจองได้ (FR-6.1) — set ทันทีตอนสมัคร/ลิงก์ผ่าน Google หรือ LINE (FR-1.8/FR-1.9), **ไม่เกี่ยวกับเบอร์โทรอีกต่อไป** |
+| verified_at | TIMESTAMP | NULL | ต้อง NOT NULL ก่อน Customer จะจองได้ (FR-6.1) — set ทันทีตอนสมัคร/ลิงก์ผ่าน LINE (FR-1.8/FR-1.9), **ไม่เกี่ยวกับเบอร์โทรอีกต่อไป** |
 | active | BOOLEAN | NOT NULL DEFAULT TRUE | |
 | created_at | TIMESTAMP | NOT NULL DEFAULT now() | |
 | updated_at | TIMESTAMP | NOT NULL DEFAULT now() | |
 
-Index: `UNIQUE (lower(username))`, `UNIQUE (phone) WHERE phone IS NOT NULL`, `UNIQUE (google_user_id) WHERE google_user_id IS NOT NULL`, `UNIQUE (line_user_id) WHERE line_user_id IS NOT NULL`, `INDEX (role)`
+Index: `UNIQUE (lower(username))`, `UNIQUE (phone) WHERE phone IS NOT NULL`, `UNIQUE (line_user_id) WHERE line_user_id IS NOT NULL`, `INDEX (role)`
 
 #### 2.2 `refresh_tokens`
 
@@ -205,7 +203,8 @@ Index: `INDEX (user_id)`, `UNIQUE (token_hash)`, `INDEX (expires_at)` — เผ
 
 Index: `INDEX (username)`, `INDEX (created_at DESC)`
 
-> `otp_verifications` (SMS OTP) ที่เคยออกแบบไว้ตรงนี้ถูกเอาออกแล้ว — เปลี่ยนไปใช้ Google/LINE OAuth link แทน
+> `otp_verifications` (SMS OTP) ที่เคยออกแบบไว้ตรงนี้ถูกเอาออกแล้ว — เปลี่ยนไปใช้ LINE OAuth link แทน (เคย
+> พิจารณา Google OAuth ด้วยแต่ตัดออกเพราะติดขั้นตอน billing verification ของ Google Cloud)
 > (ดู `01-requirements.md` FR-1.7–FR-1.9) ไม่มีตาราง OTP ในระบบอีกต่อไป
 
 #### 2.5 `menu_items` / 2.6 `menu_permissions`

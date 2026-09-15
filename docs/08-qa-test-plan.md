@@ -17,8 +17,8 @@
 
 - Seed data ขั้นต่ำต่อ SIT environment: 1 Admin, 1 Supervisor, 2 Employee, 2 Customer (1 คน verify แล้ว, 1 คน
   ยังไม่ verify) เพื่อทดสอบทั้ง positive/negative case
-- ⚠️ ต้องมีบัญชี Google/LINE ทดสอบ (test account) สำหรับ QA ใช้ผ่าน OAuth consent จริงตอน SIT — ไม่มี
-  "test mode" แบบ SMS OTP อีกต่อไป เพราะเปลี่ยนไปใช้ Google/LINE login แทนแล้ว (ดู FR-1.7–FR-1.9)
+- ⚠️ ต้องมีบัญชี LINE ทดสอบ (test account) สำหรับ QA ใช้ผ่าน OAuth consent จริงตอน SIT — ไม่มี
+  "test mode" แบบ SMS OTP อีกต่อไป เพราะเปลี่ยนไปใช้ LINE login แทนแล้ว (ดู FR-1.7–FR-1.9)
 - ต้องมีไฟล์ทดสอบสำหรับ upload: รูปภาพถูกต้อง (jpg/png ขนาดปกติ), ไฟล์ที่สวม extension ผิด (เช่น .exe
   เปลี่ยนนามสกุลเป็น .jpg), ไฟล์เกินขนาดที่กำหนด — ใช้ทดสอบ FileValidator ทุก Phase ที่มี upload (สลิป/รูป
   บริการ)
@@ -58,9 +58,8 @@
 | TC-P2-10 | Supervisor/Employee | เปิดหน้า booking list ที่ join customer/service/employee | ตรวจ SQL log ต้องไม่มี N+1 (ใช้ `JOIN FETCH`/`@EntityGraph`) | CLAUDE.md — performance |
 | TC-P2-11 | Customer | สมัครสมาชิกแบบกรอกเอง (username/password/ชื่อ/เบอร์โทร) | บัญชีสร้างสำเร็จ, role=CUSTOMER, `verified_at` เป็น null | FR-1.7 |
 | TC-P2-12 | Customer | สมัครสมาชิกด้วย username ซ้ำ | ปฏิเสธ พร้อม error ชัดเจน | FR-3.3 |
-| TC-P2-13 | Customer | สมัครสมาชิกผ่าน Google | บัญชีสร้างสำเร็จ, `google_user_id` ถูกบันทึก, `verified_at` ถูกตั้งค่าทันที | FR-1.7, FR-1.8 |
 | TC-P2-14 | Customer | สมัครสมาชิกผ่าน LINE | บัญชีสร้างสำเร็จ, `line_user_id` ถูกบันทึก, `verified_at` ถูกตั้งค่าทันที | FR-1.7, FR-1.8 |
-| TC-P2-15 | Customer (สมัครแบบกรอกเอง, ยังไม่ verified) | login แล้วไปลิงก์บัญชี Google หรือ LINE จากหน้า Profile | ผูก `google_user_id`/`line_user_id` เข้ากับ user เดิม, `verified_at` ถูกตั้งค่าทันที, ไม่มี user ซ้ำเกิดขึ้น | FR-1.9 |
+| TC-P2-15 | Customer (สมัครแบบกรอกเอง, ยังไม่ verified) | login แล้วไปลิงก์บัญชี LINE จากหน้า Profile | ผูก `line_user_id` เข้ากับ user เดิม, `verified_at` ถูกตั้งค่าทันที, ไม่มี user ซ้ำเกิดขึ้น | FR-1.9 |
 | TC-P2-16 | Public | ดูหน้า "ติดต่อเรา" | เห็นข้อมูลร้านที่ Supervisor ตั้งไว้, ไม่ต้อง login | FR-11.2 |
 | TC-P2-17 | Supervisor | แก้ไขข้อมูลติดต่อร้าน | บันทึกสำเร็จ, หน้า public เห็นข้อมูลใหม่ทันที | FR-11.1 |
 

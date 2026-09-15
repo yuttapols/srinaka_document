@@ -20,7 +20,7 @@
   happy path) — QA เช็คซ้ำใน `08-qa-test-plan.md` ข้อ 4
 - Route guard: `authGuard` (ต้อง login), `roleGuard` (ต้องตรง role), และ guard เพิ่มเฉพาะ Customer
   ("verifiedGuard" — ต้อง `verified_at` ไม่เป็น null ก่อนเข้าหน้าจอง — ได้ค่านี้จากสมัคร/ลิงก์บัญชีผ่าน
-  Google หรือ LINE ไม่ใช่ SMS OTP) — ฝั่ง frontend กันไว้ก่อน UX ดี แต่ **backend ต้องบังคับซ้ำที่ service
+  LINE ไม่ใช่ SMS OTP) — ฝั่ง frontend กันไว้ก่อน UX ดี แต่ **backend ต้องบังคับซ้ำที่ service
   layer เสมอ** (ตามที่ระบุใน FR-6.1/roadmap BE Phase 2)
 
 ## 1. Screen Inventory ตาม Phase
@@ -31,7 +31,7 @@
 
 | Screen | Role/Access | เนื้อหา/component หลัก | FR | หมายเหตุ |
 |---|---|---|---|---|
-| Login | Public (ยังไม่ login) | ฟอร์ม username/password, ลิงก์ไปสมัครสมาชิก (เฉพาะ Customer) | FR-1.1 | Admin/Supervisor/Employee ไม่มีลิงก์สมัคร (สร้างบัญชีจากฝั่งแอดมินเท่านั้น) — สมัครสมาชิก/ลิงก์บัญชี Google-LINE ย้ายไปอยู่ Phase 2 แล้ว (ดูตารางด้านล่าง) |
+| Login | Public (ยังไม่ login) | ฟอร์ม username/password, ลิงก์ไปสมัครสมาชิก (เฉพาะ Customer) | FR-1.1 | Admin/Supervisor/Employee ไม่มีลิงก์สมัคร (สร้างบัญชีจากฝั่งแอดมินเท่านั้น) — สมัครสมาชิก/ลิงก์บัญชี LINE ย้ายไปอยู่ Phase 2 แล้ว (ดูตารางด้านล่าง) |
 | Dashboard home (per role, placeholder) | Admin/Supervisor/Employee | หน้าว่างหลัง login ก่อนมี business data จริง (Phase 2+ ค่อยเติม widget) | — | เป็น landing หลัง login ของ dashboard shell |
 | Profile | ทุก role (shared component) | แก้ชื่อ, เบอร์โทร (แก้เบอร์โทรได้อิสระ ไม่กระทบ `verified_at`) | FR-2.2 | |
 | เปลี่ยนรหัสผ่าน | ทุก role (shared component) | กรอกรหัสเดิม + รหัสใหม่ + ยืนยัน | FR-2.1 | อาจฝังในหน้า Profile เป็น tab เดียวกันก็ได้ |
@@ -46,10 +46,10 @@
 |---|---|---|---|---|
 | หน้าแรก (Home) | Public | Hero, บริการ/สินค้าแนะนำ, โปรโมชั่นเด่น | FR-4.3, FR-5.2 | เป็นจุดขาย UI/UX หลักตาม NFR — ควรลง visual design ละเอียดตอน implement จริง |
 | รายการบริการ/สินค้า (Catalog listing) | Public | grid/list การ์ดสินค้า-บริการ, filter ตามหมวด, ราคา | FR-4.3 | |
-| รายละเอียดบริการ/สินค้า (Detail) | Public | ชื่อ, คำอธิบาย, ราคา, ระยะเวลา (ถ้าเป็นบริการ), รูปภาพ, ปุ่ม "จองเลย" | FR-4.1, FR-4.3 | ปุ่มจอง: ถ้ายังไม่ login → redirect ไปหน้าสมัคร/login ก่อน, ถ้า login แล้วแต่ยังไม่ verified → redirect ไปหน้าลิงก์บัญชี Google/LINE (ไม่มี guest booking) |
+| รายละเอียดบริการ/สินค้า (Detail) | Public | ชื่อ, คำอธิบาย, ราคา, ระยะเวลา (ถ้าเป็นบริการ), รูปภาพ, ปุ่ม "จองเลย" | FR-4.1, FR-4.3 | ปุ่มจอง: ถ้ายังไม่ login → redirect ไปหน้าสมัคร/login ก่อน, ถ้า login แล้วแต่ยังไม่ verified → redirect ไปหน้าลิงก์บัญชี LINE (ไม่มี guest booking) |
 | รายการโปรโมชั่น | Public | list โปรโมชั่นที่ active, ผูกกับบริการ/สินค้า | FR-5.2 | |
-| สมัครสมาชิก (Register) | Public, เฉพาะ flow Customer | ปุ่ม 3 ทาง — กรอกเอง (ฟอร์ม username/password/ชื่อ/เบอร์โทร), "เข้าสู่ระบบด้วย Google", "เข้าสู่ระบบด้วย LINE" — Google/LINE ก็ยังต้องมีฟอร์มกรอกเบอร์โทร+password เพิ่มหลัง OAuth callback | FR-1.7, FR-1.8 | ไม่มีหน้ากรอก OTP อีกต่อไป — สมัครผ่าน Google/LINE ถือว่า verified ทันที |
-| ลิงก์บัญชี Google/LINE (จากหน้า Profile) | Customer ที่ login อยู่แล้ว (สมัครแบบกรอกเอง, ยังไม่ verified) | ปุ่ม "เชื่อมต่อ Google"/"เชื่อมต่อ LINE" ในหน้า Profile, badge "ยืนยันตัวตนแล้ว/ยังไม่ยืนยัน" | FR-1.9 | ทำครั้งเดียวพอ ไม่ต้องทำซ้ำทุกครั้งที่ login |
+| สมัครสมาชิก (Register) | Public, เฉพาะ flow Customer | ปุ่ม 2 ทาง — กรอกเอง (ฟอร์ม username/password/ชื่อ/เบอร์โทร), "เข้าสู่ระบบด้วย LINE" — LINE ก็ยังต้องมีฟอร์มกรอกเบอร์โทร+password เพิ่มหลัง OAuth callback | FR-1.7, FR-1.8 | ไม่มีหน้ากรอก OTP อีกต่อไป — สมัครผ่าน LINE ถือว่า verified ทันที |
+| ลิงก์บัญชี LINE (จากหน้า Profile) | Customer ที่ login อยู่แล้ว (สมัครแบบกรอกเอง, ยังไม่ verified) | ปุ่ม "เชื่อมต่อ LINE" ในหน้า Profile, badge "ยืนยันตัวตนแล้ว/ยังไม่ยืนยัน" | FR-1.9 | ทำครั้งเดียวพอ ไม่ต้องทำซ้ำทุกครั้งที่ login |
 | Supervisor: จัดการบริการ/สินค้า | Supervisor เท่านั้น | list + form CRUD (ชื่อ, คำอธิบาย, ราคา, ระยะเวลา, รูป) | FR-4.1 | Employee เห็น list เดียวกันแบบ read-only (FR-4.4) — คอมโพเนนต์เดียวกัน ต่าง permission |
 | Supervisor: จัดการโปรโมชั่น | Supervisor เท่านั้น | list + form CRUD ผูกกับบริการ/สินค้า | FR-5.1 | |
 | Booking flow (จองนัด) | Customer (login+verified เท่านั้น) | wizard: เลือกบริการ → เลือกวันเวลา → ตรวจสอบ/ยืนยัน | FR-6.1 | multi-step ในหน้าเดียวหรือแยกหน้าได้ — แนะนำ wizard component เดียวกันเพื่อลดการทำซ้ำ |

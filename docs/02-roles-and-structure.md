@@ -9,19 +9,19 @@
 | **Admin** | ดูแลระบบ/infra เท่านั้น ไม่เห็น/ไม่ยุ่งข้อมูลธุรกิจ (สินค้า, บริการ, ราคา, booking, ยอดขาย) — เหมือน pattern ที่ใช้ใน Share Money ที่กัน ADMIN ออกจากข้อมูลหนี้ | ต้อง login |
 | **Supervisor** | เจ้าของ/ผู้ดูแลธุรกิจ จัดการสินค้า/บริการ/โปรโมชั่น, มอบหมายงาน, ดู report ภาพรวม | ต้อง login |
 | **Employee** | พนักงานร้าน (หมอนวด/staff) ใช้งานหน้างาน ถูกให้คะแนน | ต้อง login |
-| **Customer** | ลูกค้า | ดู public content (สินค้า/บริการ/โปรโมชั่น) ได้โดยไม่ login — แต่**ต้องสมัครสมาชิก+ยืนยันตัวตนผ่าน Google/LINE ก่อนถึงจะจองนัดได้** (ไม่มี guest booking) |
+| **Customer** | ลูกค้า | ดู public content (สินค้า/บริการ/โปรโมชั่น) ได้โดยไม่ login — แต่**ต้องสมัครสมาชิก+ยืนยันตัวตนผ่าน LINE ก่อนถึงจะจองนัดได้** (ไม่มี guest booking) |
 
 จุดที่ต่างจาก Share Money เดิมชัดเจน: ระบบเดิมบังคับ login ทุก role ไม่มีแนวคิด guest/public access เลย —
 ระบบนี้ต้องรองรับ endpoint แบบ public (ไม่ต้องมี JWT) คู่กับ endpoint แบบต้อง auth ในระบบเดียวกัน และมีชั้น
 "login แล้วแต่ยัง verify ไม่ผ่าน" เพิ่มมาอีกชั้นสำหรับ Customer (login ได้ แต่ยังจองไม่ได้จนกว่าจะสมัครผ่าน
-Google/LINE โดยตรง หรือลิงก์บัญชี Google/LINE เพิ่มถ้าสมัครแบบกรอกเอง — ดู `01-requirements.md` FR-1.8/FR-1.9)
+LINE โดยตรง หรือลิงก์บัญชี LINE เพิ่มถ้าสมัครแบบกรอกเอง — ดู `01-requirements.md` FR-1.8/FR-1.9)
 
 ## Phase การทำงาน
 
 ดูรายละเอียดเต็มที่ `09-implementation-roadmap.md` — สรุปย่อ:
 
 1. **Phase 1** — Foundation: auth/JWT ทุก role, profile, RBAC, nav-menu permission, deploy setup (Customer
-   สมัคร+verify ผ่าน Google/LINE เป็นงาน Phase 2 — ดู `01-requirements.md` FR-1.7)
+   สมัคร+verify ผ่าน LINE เป็นงาน Phase 2 — ดู `01-requirements.md` FR-1.7)
 2. **Phase 2** — Product/Service catalog, โปรโมชั่น, ระบบจองนัด
 3. **Phase 3** — Payment (แนบสลิป), ยกเลิก/ขอคืนเงิน, ให้คะแนน
 4. **Phase 4** — Report ภาพรวม, Employee schedule, Admin ops, release

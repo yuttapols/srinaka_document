@@ -25,7 +25,7 @@ package/โมดูลที่ผูกกับ business domain ใหม่
 | Rendering | Angular Prerender (SSG) เฉพาะ route public (**เพิ่มใหม่**) | หน้า public (หน้าแรก/catalog/รายละเอียดบริการ/โปรโมชั่น) มี HTML พร้อมก่อน JS ทำงาน เพื่อ SEO + first paint เร็ว — หน้าที่ต้อง login (booking/dashboard) ยังเป็น CSR ปกติ **ไม่ทำ full SSR** เพื่อให้ยัง deploy เป็น static files ขึ้น Cloudflare Pages ได้เหมือนเดิม (ไม่ต้องมี Node server) |
 | Forms | Angular Reactive Forms + custom Validators (reuse `shared/utils/validators.util.ts`) | ฟอร์มจอง (เลือกบริการ/วันเวลา/ข้อมูลลูกค้า), ฟอร์มหลังบ้านทั้งหมด — ทุก input ต้องมี maxlength (default 50) |
 | รูปภาพ | Cloudinary auto-format (`f_auto`/`q_auto`) → WebP/AVIF อัตโนมัติตาม browser | ผ่าน `FileStorageService` เดิมที่ลอกจาก Share Money ฝั่ง backend — reuse `shared/utils/image-file.util.ts` ฝั่ง frontend สำหรับ validate ก่อนอัปโหลด |
-| Routing | Angular Router + Route Guards (`auth.guard`, `role.guard` reuse ตรง ๆ + `verifiedGuard` **เพิ่มใหม่**) | `verifiedGuard` เฉพาะ Customer — กันเข้าหน้าจองก่อนสมัคร/ลิงก์บัญชีผ่าน Google หรือ LINE (ไม่ใช่ SMS OTP แล้ว); `guest.guard` เดิมอาจต้องปรับเพราะระบบนี้มีหน้า public browse โดยไม่ login ได้ (ต่างจาก Share Money ที่บังคับ login ทุก route) |
+| Routing | Angular Router + Route Guards (`auth.guard`, `role.guard` reuse ตรง ๆ + `verifiedGuard` **เพิ่มใหม่**) | `verifiedGuard` เฉพาะ Customer — กันเข้าหน้าจองก่อนสมัคร/ลิงก์บัญชีผ่าน LINE (ไม่ใช่ SMS OTP แล้ว); `guest.guard` เดิมอาจต้องปรับเพราะระบบนี้มีหน้า public browse โดยไม่ login ได้ (ต่างจาก Share Money ที่บังคับ login ทุก route) |
 | HTTP | HttpClient + Interceptor เดิม (`auth.interceptor`, `error.interceptor`, `loading.interceptor`, `api-response.interceptor`) reuse ตรง ๆ | |
 | Build/Tooling | Angular CLI, ESLint, Prettier (reuse config เดิม) | |
 | Deployment | Build (พร้อม prerender route public) → static files → Cloudflare Pages | ตาม pattern เดิมที่ใช้กับ Share Money frontend |
@@ -44,7 +44,7 @@ frontend/src/app/
     services/        (sweet-alert.service reuse)
     utils/           (validators.util reuse, image-file.util reuse — ตัด excel/document-file util ทิ้งถ้าไม่ใช้)
   features/
-    auth/            (reuse โครงเดิม ปรับ flow ให้มี register 3 ทาง (กรอกเอง/Google/LINE) + link account)
+    auth/            (reuse โครงเดิม ปรับ flow ให้มี register 2 ทาง (กรอกเอง/LINE) + link account)
     public/          (ใหม่ทั้งหมด — catalog/booking/promotion, ใช้ GSAP+prerender)
     admin/, profile/ (reuse โครงเดิม)
     (ตัด debtors/debts/bank-accounts/documents/slips/reports เดิมทิ้ง — เป็น business logic เฉพาะ Share Money
@@ -83,9 +83,9 @@ frontend repo จะ scaffold จริง แล้วอัปเดต `CLAUD
 - `core/guards/guest.guard.ts` — ของเดิมออกแบบมาสำหรับระบบที่บังคับ login ทุก route ต้องปรับให้เข้ากับ Srinaka
   ที่มีหน้า public browse ได้โดยไม่ login (ไม่มี guest booking แต่มี guest browse) เพิ่ม `verifiedGuard` ใหม่
 - `core/models/user.model.ts` — ตัด field ที่ผูก debt/creditor ทิ้ง, เปลี่ยน role enum เป็น
-  `ADMIN`/`SUPERVISOR`/`EMPLOYEE`/`CUSTOMER`, เพิ่ม `phone`/`verifiedAt`/`hasLinkedGoogle`/`hasLinkedLine`
-- `core/services/auth.service.ts` — เพิ่ม flow สมัครสมาชิก 3 ทาง (กรอกเอง/Google OAuth/LINE OAuth) + ลิงก์บัญชี
-  Google/LINE จากหน้า profile ที่ Share Money ไม่มี
+  `ADMIN`/`SUPERVISOR`/`EMPLOYEE`/`CUSTOMER`, เพิ่ม `phone`/`verifiedAt`/`hasLinkedLine`
+- `core/services/auth.service.ts` — เพิ่ม flow สมัครสมาชิก 2 ทาง (กรอกเอง/LINE OAuth) + ลิงก์บัญชี
+  LINE จากหน้า profile ที่ Share Money ไม่มี
 - `core/layout/app-shell/` — ต้องแยกเป็น 2 shell (public/marketing shell vs dashboard shell) ตามที่ระบุใน
   `04-screen-design.md` หัวข้อ 0 ไม่ใช่ shell เดียวแบบเดิม
 - `features/slips/` — **concept ใกล้เคียง FR-7 มาก** (Share Money ก็มีอัปโหลด+ตรวจสลิปเหมือนกัน) ดู

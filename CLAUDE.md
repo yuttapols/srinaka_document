@@ -12,8 +12,9 @@ Pages สำเร็จแล้ว) เอามาเป็นฐานแท
 
 **ธุรกิจเปลี่ยนไปแล้วระหว่างคุยกัน** (ลำดับ: ลอกโครงสร้าง Share Money → คิดจะทำร้านโรตี → เปลี่ยนเป็นร้าน
 สปา/นวด) — ตอนนี้ธุรกิจคือ **ร้านสปา/นวด เน้นเว็บสวยงาม** ให้ลูกค้าดูสินค้า/บริการ+ราคา+โปรโมชั่น, สมัคร
-สมาชิก 3 ทาง (กรอกเอง/Google/LINE) + ยืนยันตัวตนผ่าน Google/LINE OAuth (**ตัดสินใจแล้ว** ไม่ใช้ SMS OTP อีก
-ต่อไป — ดู FR-1.7–FR-1.9), จองนัด+จ่ายเงิน
+สมาชิก 2 ทาง (กรอกเอง/LINE) + ยืนยันตัวตนผ่าน LINE OAuth (**ตัดสินใจแล้ว** ไม่ใช้ SMS OTP อีกต่อไป —
+เคยพิจารณา Google login ด้วยแต่ตัดออกเพราะติดขั้นตอน billing verification ของ Google Cloud — ดู
+FR-1.7–FR-1.9), จองนัด+จ่ายเงิน
 (แนบสลิป)+ยกเลิก/ขอคืนเงิน, ให้คะแนน, **และ Employee ขายบริการหน้าร้านให้ลูกค้า walk-in เอง (POS-lite: รับ
 เงินสด, คีย์ส่วนลด, พิมพ์ใบเสร็จ — ไม่มีระบบตัด stock)** (module เต็มดู FR-1 ถึง FR-10 ใน `01-requirements.md`)
 — **ไม่มี guest booking แบบออนไลน์** (ต้อง login+verify ตัวตนก่อนจอง) แต่ walk-in หน้าร้านไม่ต้องมี Customer
@@ -24,13 +25,13 @@ account เลย **ระบบทิป/แจ้งปัญหาถูก�
 **ออกแบบครบ 5 Phase แล้ว** (requirement เต็มอยู่ใน `01-requirements.md`, roadmap ใน
 `09-implementation-roadmap.md`) — **Backend Phase 1 (Foundation: auth ทุก role, RBAC, profile, nav-menu,
 deploy setup) ทำเสร็จแล้ว** ที่ `D:\GIT\BACK-END\srinaka_backend` (ดูสถานะจริงจาก git log ของ repo นั้น ไม่ใช่
-จากไฟล์นี้) — Customer สมัครสมาชิก+verify ตัวตน (Google/LINE) เป็นงาน **Phase 2** ไม่ใช่ Phase 1 **Phase 5
+จากไฟล์นี้) — Customer สมัครสมาชิก+verify ตัวตน (LINE) เป็นงาน **Phase 2** ไม่ใช่ Phase 1 **Phase 5
 ไม่ใช่ feature ใหม่** เป็น phase หาบั๊ก/ช่องโหว่/ช่องว่างทั้งระบบของทีมเองก่อน launch จริง (ต่างจาก feature
 "แจ้งปัญหา" ของลูกค้าที่ถูกพักไว้ — คนละเรื่องกัน อย่าสับสน)
 
 `01-requirements.md` มี assumption/จุดที่ยังไม่ confirm หลายจุด (payment gateway ถ้าจะทำต่อจาก slip ทีหลัง,
 ตัวเลขนโยบาย refund ที่ชัดเจน ฯลฯ) — **ห้ามถือว่าเป็นข้อสรุปจริง** ต้องเช็คกับ user อีกทีก่อน implement Phase
-ที่เกี่ยวข้อง (เรื่อง SMS OTP vs Google/LINE login **ตัดสินใจแล้ว** ไม่ใช่ open item อีกต่อไป — ดู FR-1.7)
+ที่เกี่ยวข้อง (เรื่อง SMS OTP vs LINE login **ตัดสินใจแล้ว** ไม่ใช่ open item อีกต่อไป — ดู FR-1.7)
 
 **อย่าเดา business requirement เองแล้วเขียนเป็นเอกสารทันที** — รอบก่อนหน้าเคยเขียน requirement จาก quick-poll
 คำตอบสั้น ๆ ไปก่อน แล้ว user บอกว่ายังไม่ได้เล่า business จริงเลย ต้องรื้อเขียนใหม่ทั้งหมด — ให้ฟัง user เล่า
@@ -59,7 +60,7 @@ deploy setup) ทำเสร็จแล้ว** ที่ `D:\GIT\BACK-END\sri
 | Admin | ดูแลระบบ/infra เท่านั้น ไม่ยุ่งข้อมูลธุรกิจ (เหมือน pattern ที่ Share Money กัน ADMIN ออกจากข้อมูลหนี้) | ต้อง login |
 | Supervisor | เจ้าของ/ผู้ดูแลธุรกิจ จัดการสินค้า/บริการ/โปรโมชั่น, ตรวจสลิป, อนุมัติ refund, ดู report | ต้อง login |
 | Employee | พนักงานร้าน ถูกให้คะแนน | ต้อง login |
-| Customer | ลูกค้า | browse ได้โดยไม่ login — **แต่ต้องสมัคร (กรอกเอง/Google/LINE) + verify ตัวตนผ่าน Google/LINE ก่อนถึงจะจองได้ ไม่มี guest booking** |
+| Customer | ลูกค้า | browse ได้โดยไม่ login — **แต่ต้องสมัคร (กรอกเอง/LINE) + verify ตัวตนผ่าน LINE ก่อนถึงจะจองได้ ไม่มี guest booking** |
 
 ## ⚠️ ระวังคำว่า "เมนู" ชนกัน 2 ความหมาย
 
@@ -158,7 +159,7 @@ Plan" — สรุปไว้แล้วอีกรอบใน `D:\GIT\FRON
 - ❌ ไม่เอา: `features/{debts,debtors,bank-accounts,documents}/` และ model/service ที่ผูก debt/migration/
   bank-account เดิม
 - ⚠️ ต้องแก้: `guest.guard.ts` (ต้องรองรับ public browse), `user.model.ts` (role enum + phone field ใหม่),
-  `auth.service.ts` (เพิ่ม flow สมัคร 3 ทาง กรอกเอง/Google/LINE + ลิงก์บัญชีทีหลัง — ไม่ใช่ OTP),
+  `auth.service.ts` (เพิ่ม flow สมัคร 2 ทาง กรอกเอง/LINE + ลิงก์บัญชีทีหลัง — ไม่ใช่ OTP),
   `app-shell/` (แยก public shell กับ dashboard shell), `features/slips/`
   (เอา pattern อัปโหลด/ตรวจสลิปมาอ้างอิง แต่ business logic เขียนใหม่ผูกกับ booking/payment)
 - **ไม่ใช้ PrimeNG/daisyUI/Bootstrap** — เคยพิจารณาแล้วแต่ยกเลิก เพราะ `share_money_frontend` มี shared
